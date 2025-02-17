@@ -2,6 +2,7 @@ import os
 import logging
 import aiohttp
 import asyncio
+import nest_asyncio
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -10,6 +11,9 @@ from telegram.ext import (
     ContextTypes,
     filters,
 )
+
+# Terapkan nest_asyncio agar event loop yang sudah berjalan bisa digunakan
+nest_asyncio.apply()
 
 # Konfigurasi logging
 logging.basicConfig(
@@ -86,9 +90,11 @@ async def handle_private_message(update: Update, context: ContextTypes.DEFAULT_T
 
 # Handler untuk pesan di grup (hapus pesan yang bukan perintah /ask, /start, atau /help)
 async def handle_group_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.message.text and not (update.message.text.startswith('/ask') or
-                                    update.message.text.startswith('/start') or
-                                    update.message.text.startswith('/help')):
+    if update.message.text and not (
+        update.message.text.startswith('/ask') or
+        update.message.text.startswith('/start') or
+        update.message.text.startswith('/help')
+    ):
         try:
             await update.message.delete()
         except Exception as e:
@@ -98,22 +104,22 @@ async def handle_group_message(update: Update, context: ContextTypes.DEFAULT_TYP
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message.chat.type in ['group', 'supergroup']:
         file_id = update.message.photo[-1].file_id  # Ambil foto dengan resolusi tertinggi
-        photo = await context.bot.get_file(file_id)
+        # Mengambil file foto (jika diperlukan untuk diproses)
         await update.message.reply_text("📸 Foto berhasil diterima. Saya sedang memprosesnya...")
         await update.message.reply_text("Gambar sudah diterima, silakan tanyakan pertanyaan menggunakan /ask.")
 
 async def main() -> None:
     application = ApplicationBuilder().token(TELEGRAM_BOT_API).build()
 
-    # Handler perintah (tersedia di grup dan chat pribadi)
+    # Menambahkan handler perintah
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("ask", ask_command))
 
-    # Handler pesan untuk chat pribadi: pesan teks (selain perintah) dianggap sebagai pertanyaan
+    # Handler untuk pesan teks di chat pribadi
     application.add_handler(MessageHandler(filters.ChatType.PRIVATE & filters.TEXT & ~filters.COMMAND, handle_private_message))
 
-    # Handler pesan untuk grup: hapus pesan yang tidak menggunakan perintah /ask, /start, atau /help
+    # Handler untuk pesan teks di grup
     application.add_handler(MessageHandler((filters.ChatType.GROUP | filters.ChatType.SUPERGROUP) & filters.TEXT & ~filters.COMMAND, handle_group_message))
 
     # Handler untuk foto di grup
