@@ -21,6 +21,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = """
     💫 **Tarna(BOT) Telegram Bot** 💫
+    📱**Developer: @TarnaWijaya**
     
     /start - Mulai bot
     /help - Tampilkan pesan bantuan
@@ -31,6 +32,10 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     - Pencarian informasi real-time
     - Kemampuan analisis data
     - Percakapan kontekstual
+    
+    Organisasi:
+    - Telegram: @TarnaWijaya_grup
+    - WhatsApp: [Papah Jerman 😃](https://chat.whatsapp.com/Gomu4BhzluT3gaXRHmNs4n)
     """
     await update.message.reply_text(help_text, parse_mode='Markdown')
 
@@ -63,7 +68,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 response = generate_content(query)
                 await update.message.reply_text(response)
             else:
-                await update.message.reply_text("Silakan tulis pertanyaan setelah /ask")
+                await update.message.reply_text("Silakan tulis pertanyaan setelah /ask, contoh: /ask {pesan}")
     # Handle private messages
     else:
         response = generate_content(text)
