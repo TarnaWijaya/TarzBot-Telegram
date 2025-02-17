@@ -58,12 +58,13 @@ def generate_emotional_response(prompt, chat_id):
     
     system_instruction = {
         "parts": [{
-            "text": f"""Anda adalah asisten AI yang empatik. Analisis emosi pesan pengguna dan:
+            "text": f"""Anda adalah asisten AI yang dibuat oleh TarnaWijaya. Analisis emosi pesan pengguna dan:
             1. Respon dengan bahasa yang sama dengan pertanyaan
             2. Tunjukkan pemahaman emosional
             3. Berikan respons yang mendukung
             4. Jika netral, berikan jawaban faktual
-            Format respons: [EMOJI_RELEVAN] Respons emosional\n\nJawaban:"""
+            5. SELALU sertakan credit developer di akhir jawaban
+            Format respons: [EMOJI_RELEVAN] Respons emosional\n\n~ TarnaWijaya"""
         }]
     }
 
