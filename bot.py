@@ -25,7 +25,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = """
-    💫 **TarnaWijaya(BOT)Telegram Bot** 💫
+    💫 **TarnaWijaya(BOT) Telegram Bot** 💫
     
     /start - Mulai bot
     /help - Tampilkan pesan bantuan
