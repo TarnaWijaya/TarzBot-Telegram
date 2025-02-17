@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)
 TELEGRAM_BOT_API = "7648169616:AAG-xCt_l_BHkhGcJ9bTtQpeCrz7tv7t0cQ"
 GEMINI_API_KEY = "AIzaSyC0Cjd5U_kIM9tvqxfjjvQ_MlhabjtxA30"
 
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Fungsi handler untuk perintah /start.
@@ -32,7 +31,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
     await update.message.reply_text(welcome_message)
 
-
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Fungsi handler untuk perintah /help.
@@ -44,7 +42,6 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         "WhatsApp: https://chat.whatsapp.com/Gomu4BhzluT3gaXRHmNs4n"
     )
     await update.message.reply_text(help_message)
-
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
@@ -69,7 +66,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     await update.message.reply_text(reply)
 
-
 def main() -> None:
     """
     Fungsi utama untuk menjalankan bot.
@@ -87,7 +83,6 @@ def main() -> None:
 
     # Mulai polling (untuk deployment real-time)
     application.run_polling()
-
 
 if __name__ == "__main__":
     main()
