@@ -21,14 +21,11 @@ logging.basicConfig(
 conversation_history = defaultdict(list)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('Halo! Saya Tarna(BOT). Ketik /help untuk bantuan')
+    await update.message.reply_text('Halo! Saya Gemini Assistant. Ketik /help untuk bantuan')
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = """
-    💫 **Tarna(BOT) Telegram Bot** 💫
-    
-    Dibuat dengan ❤️ oleh: [TarnaWijaya](https://t.me/TarnaWijaya)
-    Grup Resmi: [@TarnaWijaya_grup](https://t.me/TarnaWijaya_grup)
+    💫 **Gemini Telegram Bot** 💫
     
     /start - Mulai bot
     /help - Tampilkan pesan bantuan
@@ -39,7 +36,6 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     - Bisa di-reply di grup
     - Memori percakapan terbatas
     - Deteksi bahasa otomatis
-
     """
     await update.message.reply_text(help_text, parse_mode='Markdown')
 
@@ -58,13 +54,12 @@ def generate_emotional_response(prompt, chat_id):
     
     system_instruction = {
         "parts": [{
-            "text": f"""Anda adalah asisten AI yang dibuat oleh TarnaWijaya. Analisis emosi pesan pengguna dan:
+            "text": f"""Anda adalah asisten AI yang empatik. Analisis emosi pesan pengguna dan:
             1. Respon dengan bahasa yang sama dengan pertanyaan
             2. Tunjukkan pemahaman emosional
             3. Berikan respons yang mendukung
             4. Jika netral, berikan jawaban faktual
-            5. SELALU sertakan credit developer di akhir jawaban
-            Format respons: [EMOJI_RELEVAN] Respons emosional\n\n~ TarnaWijaya"""
+            Format respons: [EMOJI_RELEVAN] Respons emosional\n\nJawaban:"""
         }]
     }
 
