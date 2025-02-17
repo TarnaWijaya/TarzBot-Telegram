@@ -27,6 +27,9 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = """
     💫 **Tarna(BOT) Telegram Bot** 💫
     
+    Dibuat dengan ❤️ oleh: [TarnaWijaya](https://t.me/TarnaWijaya)
+    Grup Resmi: [@TarnaWijaya_grup](https://t.me/TarnaWijaya_grup)
+    
     /start - Mulai bot
     /help - Tampilkan pesan bantuan
     /ask [pertanyaan] - Ajukan pertanyaan ke AI
@@ -36,9 +39,7 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     - Bisa di-reply di grup
     - Memori percakapan terbatas
     - Deteksi bahasa otomatis
-    
-    By @TarnaWijaya
-    Grup @TarnaWijaya_grup
+
     """
     await update.message.reply_text(help_text, parse_mode='Markdown')
 
