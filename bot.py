@@ -26,7 +26,7 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
 ✨ **Perintah yang Tersedia**:
 /start - Mulai bot
 /help - Tampilkan pesan bantuan
-/ask [pertanyaan] - Ajukan pertanyaan ke AI
+/ask - Ajukan pertanyaan ke AI
 
 🚀 **Fitur**:
 - Diskusi grup dengan command `/ask`
