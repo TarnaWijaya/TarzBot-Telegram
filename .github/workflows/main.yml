@@ -3,7 +3,7 @@ name: Telegram Bot Workflow
 on:
   schedule:
     - cron: '*/1 * * * *'  # Setiap menit
-  workflow_dispatch:  # Menjalankan secara manual jika diperlukan
+  workflow_dispatch:
 
 jobs:
   run-bot:
