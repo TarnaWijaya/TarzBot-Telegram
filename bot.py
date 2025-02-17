@@ -1,132 +1,85 @@
-import os
 import logging
-import aiohttp
-import asyncio
-import nest_asyncio
 from telegram import Update
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    MessageHandler,
-    ContextTypes,
-    filters,
-)
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+import requests
+import json
 
-# Terapkan nest_asyncio agar event loop yang sudah berjalan bisa digunakan
-nest_asyncio.apply()
-
-# Konfigurasi logging
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
-)
-logger = logging.getLogger(__name__)
-
-# Token API Bot Telegram dan Gemini
-TELEGRAM_BOT_API = "7648169616:AAG-xCt_l_BHkhGcJ9bTtQpeCrz7tv7t0cQ"
+# Konfigurasi
 GEMINI_API_KEY = "AIzaSyC0Cjd5U_kIM9tvqxfjjvQ_MlhabjtxA30"
+BOT_TOKEN = "7648169616:AAG-xCt_l_BHkhGcJ9bTtQpeCrz7tv7t0cQ"
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY
 
-async def generate_answer(query: str) -> str:
+# Setup logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text('Halo! Saya Tarna(BOT). Ketik /help untuk bantuan')
+
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    help_text = """
+    💫 **Gemini Telegram Bot** 💫
+    
+    /start - Mulai bot
+    /help - Tampilkan pesan bantuan
+    /ask [pertanyaan] - Ajukan pertanyaan ke AI
+    
+    Fitur:
+    - Diskusi grup dengan command /ask
+    - Pencarian informasi real-time
+    - Kemampuan analisis data
+    - Percakapan kontekstual
+    - Menggunakan layanan api google gemini
     """
-    Memanggil endpoint Gemini 1.5 Flash untuk menghasilkan jawaban.
-    Endpoint: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent
-    """
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-    headers = {"Content-Type": "application/json"}
-    payload = {
-        "contents": [
-            {
-                "parts": [{"text": query}]
-            }
-        ]
+    await update.message.reply_text(help_text, parse_mode='Markdown')
+
+def generate_content(prompt):
+    headers = {'Content-Type': 'application/json'}
+    data = {
+        "contents": [{
+            "parts":[{"text": prompt}]
+        }]
     }
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=headers, json=payload) as response:
-                data = await response.json()
-                logger.info(f"Gemini API response: {data}")
-                answer = data.get("candidates", [{}])[0].get("text", "")
-                return answer
-    except Exception as e:
-        logger.error(f"Error generating answer: {e}")
-        return "Maaf, terjadi kesalahan saat memproses permintaan Anda."
-
-async def process_question(update: Update, context: ContextTypes.DEFAULT_TYPE, question: str) -> None:
-    """Memproses pertanyaan dengan memanggil Gemini API dan mengirim jawaban."""
-    answer = await generate_answer(question)
-    await update.message.reply_text(f"🔍 Pertanyaan: {question}\n\n💡 Jawaban: {answer}")
-
-# Perintah /start (tersedia di grup dan chat pribadi)
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(
-        "Halo! Saya adalah asisten AI yang siap membantu Anda.\n"
-        "Di grup, gunakan perintah /ask [pertanyaan] untuk bertanya.\n"
-        "Di chat pribadi, Anda bisa langsung mengirimkan pertanyaan tanpa perintah.\n"
-        "Gunakan /help untuk informasi lebih lanjut."
-    )
-
-# Perintah /help (tersedia di grup dan chat pribadi)
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(
-        "Informasi Grup:\n"
-        "Telegram: https://t.me/TarnaWijaya_grup\n"
-        "WhatsApp: https://chat.whatsapp.com/Gomu4BhzluT3gaXRHmNs4n\n\n"
-        "Di grup, gunakan perintah /ask [pertanyaan] untuk bertanya.\n"
-        "Di chat pribadi, cukup kirimkan pertanyaan Anda secara langsung."
-    )
-
-# Perintah /ask (untuk grup dan chat pribadi)
-async def ask_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if not context.args:
-        await update.message.reply_text("⚠️ Format: /ask [pertanyaan]")
-        return
-    question = " ".join(context.args)
-    await process_question(update, context, question)
-
-# Handler untuk pesan di chat pribadi (pesan teks tanpa perintah)
-async def handle_private_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.message.text and not update.message.text.startswith('/'):
-        question = update.message.text
-        await process_question(update, context, question)
-
-# Handler untuk pesan di grup (hapus pesan yang bukan perintah /ask, /start, atau /help)
-async def handle_group_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.message.text and not (
-        update.message.text.startswith('/ask') or
-        update.message.text.startswith('/start') or
-        update.message.text.startswith('/help')
-    ):
+    
+    response = requests.post(GEMINI_API_URL, headers=headers, data=json.dumps(data))
+    if response.status_code == 200:
         try:
-            await update.message.delete()
-        except Exception as e:
-            logger.error(f"Error deleting message: {e}")
+            return response.json()['candidates'][0]['content']['parts'][0]['text']
+        except (KeyError, IndexError):
+            return "Maaf, terjadi kesalahan dalam memproses respons."
+    else:
+        return f"Error: {response.status_code} - {response.text}"
 
-# Handler untuk foto (di grup)
-async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    if update.message.chat.type in ['group', 'supergroup']:
-        file_id = update.message.photo[-1].file_id  # Ambil foto dengan resolusi tertinggi
-        # Mengambil file foto (jika diperlukan untuk diproses)
-        await update.message.reply_text("📸 Foto berhasil diterima. Saya sedang memprosesnya...")
-        await update.message.reply_text("Gambar sudah diterima, silakan tanyakan pertanyaan menggunakan /ask.")
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message_type = update.message.chat.type
+    text = update.message.text
+    
+    # Handle group messages
+    if message_type in ['group', 'supergroup']:
+        if text.startswith('/ask'):
+            query = text[5:].strip()
+            if query:
+                response = generate_content(query)
+                await update.message.reply_text(response)
+            else:
+                await update.message.reply_text("Silakan tulis pertanyaan setelah /ask")
+    # Handle private messages
+    else:
+        response = generate_content(text)
+        await update.message.reply_text(response)
 
-async def main() -> None:
-    application = ApplicationBuilder().token(TELEGRAM_BOT_API).build()
-
-    # Menambahkan handler perintah
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("ask", ask_command))
-
-    # Handler untuk pesan teks di chat pribadi
-    application.add_handler(MessageHandler(filters.ChatType.PRIVATE & filters.TEXT & ~filters.COMMAND, handle_private_message))
-
-    # Handler untuk pesan teks di grup
-    application.add_handler(MessageHandler((filters.ChatType.GROUP | filters.ChatType.SUPERGROUP) & filters.TEXT & ~filters.COMMAND, handle_group_message))
-
-    # Handler untuk foto di grup
-    application.add_handler(MessageHandler(filters.PHOTO, handle_photo))
-
-    # Menjalankan polling bot
-    await application.run_polling()
-
-if __name__ == "__main__":
-    asyncio.run(main())
+if __name__ == '__main__':
+    application = Application.builder().token(BOT_TOKEN).build()
+    
+    # Command handlers
+    application.add_handler(CommandHandler('start', start))
+    application.add_handler(CommandHandler('help', help))
+    application.add_handler(CommandHandler('ask', handle_message))
+    
+    # Message handler
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    
+    # Run bot
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
