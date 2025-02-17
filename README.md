@@ -17,4 +17,4 @@ menggunakan git clone
 pkg update && pkg upgrade && pkg install python && pkg install python-pip && pip install python-telegram-bot requests && git clone https://github.com/TarnaWijaya/TarzBot-Telegram.git && cd TarzBot-Telegram && python bot.py
 ```
 
-@MasterCrack
+@Mas Tarna
