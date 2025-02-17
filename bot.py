@@ -1,7 +1,8 @@
 import os
 import logging
 import aiohttp
-from telegram import Update, InputFile
+import asyncio
+from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -16,9 +17,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Konfigurasi API (sebaiknya simpan token/API key di environment variables atau GitHub Secrets)
-TELEGRAM_BOT_API = os.environ.get("TELEGRAM_BOT_API", "7648169616:AAG-xCt_l_BHkhGcJ9bTtQpeCrz7tv7t0cQ")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyC0Cjd5U_kIM9tvqxfjjvQ_MlhabjtxA30")
+# Token API Bot Telegram dan Gemini
+TELEGRAM_BOT_API = "7648169616:AAG-xCt_l_BHkhGcJ9bTtQpeCrz7tv7t0cQ"
+GEMINI_API_KEY = "AIzaSyC0Cjd5U_kIM9tvqxfjjvQ_MlhabjtxA30"
 
 async def generate_answer(query: str) -> str:
     """
@@ -39,7 +40,6 @@ async def generate_answer(query: str) -> str:
             async with session.post(url, headers=headers, json=payload) as response:
                 data = await response.json()
                 logger.info(f"Gemini API response: {data}")
-                # Asumsi format respons: {"candidates": [{"text": "jawaban"}], ...}
                 answer = data.get("candidates", [{}])[0].get("text", "")
                 return answer
     except Exception as e:
@@ -102,7 +102,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         await update.message.reply_text("📸 Foto berhasil diterima. Saya sedang memprosesnya...")
         await update.message.reply_text("Gambar sudah diterima, silakan tanyakan pertanyaan menggunakan /ask.")
 
-def main() -> None:
+async def main() -> None:
     application = ApplicationBuilder().token(TELEGRAM_BOT_API).build()
 
     # Handler perintah (tersedia di grup dan chat pribadi)
@@ -119,7 +119,8 @@ def main() -> None:
     # Handler untuk foto di grup
     application.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 
-    application.run_polling()
+    # Menjalankan polling bot
+    await application.run_polling()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
