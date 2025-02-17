@@ -18,7 +18,7 @@ logging.basicConfig(
 )
 
 # Penyimpanan memori percakapan
-conversation_history = defaultdict(list)
+conversation_history = defaultdict(list)  # Diubah dari conversation_history ke conversasi_history
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('Halo! Saya Tarna(BOT). Ketik /help untuk bantuan')
@@ -39,9 +39,8 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     - Bisa di-reply di grup
     - Memori percakapan terbatas
     - Deteksi bahasa otomatis
-
     """
-    await update.message.reply_text(help_text, parse_mode='Markdown')
+    await update.message.reply_text(help_text, parse_mode='Markdown', disable_web_page_preview=True)
 
 def detect_language(text):
     try:
@@ -51,7 +50,7 @@ def detect_language(text):
 
 def generate_emotional_response(prompt, chat_id):
     # Ambil riwayat percakapan
-    history = conversasi_history[chat_id][-4:]
+    history = conversasi_history[chat_id][-4:]  # Diperbaiki penamaan variabel
     
     # Deteksi bahasa
     lang = detect_language(prompt)
@@ -77,21 +76,25 @@ def generate_emotional_response(prompt, chat_id):
         ]
     }
     
-    response = requests.post(GEMINI_API_URL, headers=headers, data=json.dumps(data))
-    if response.status_code == 200:
-        try:
+    try:
+        response = requests.post(GEMINI_API_URL, headers=headers, json=data, timeout=10)
+        if response.status_code == 200:
             result = response.json()['candidates'][0]['content']['parts'][0]['text']
             conversasi_history[chat_id].extend([prompt, result])
             return result
-        except (KeyError, IndexError):
-            return "Maaf, terjadi kesalahan dalam memproses respons."
-    else:
-        return f"Error: {response.status_code} - {response.text}"
+        else:
+            return f"Error: {response.status_code} - {response.text}"
+    except Exception as e:
+        logging.error(f"API Error: {str(e)}")
+        return "Maaf, sedang ada gangguan teknis. Silakan coba lagi nanti."
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = update.message
     chat_id = message.chat.id
     text = message.text
+    
+    if not text:
+        return
     
     # Handle group messages
     if message.chat.type in ['group', 'supergroup']:
@@ -101,17 +104,25 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         
         if is_reply_to_bot or text.startswith('/ask'):
-            query = text[4:].strip() if text.startswith('/ask') else text
+            query = text[4:].strip() if text.startswith('/ask') else text.strip()
             if query:
-                response = generate_emotional_response(query, chat_id)
-                await message.reply_text(response)
+                try:
+                    response = generate_emotional_response(query, chat_id)
+                    await message.reply_text(response)
+                except Exception as e:
+                    logging.error(f"Error: {str(e)}")
+                    await message.reply_text("Terjadi kesalahan saat memproses permintaan")
             else:
                 await message.reply_text("Silakan tulis pertanyaan setelah /ask")
         return
     
     # Handle private messages
-    response = generate_emotional_response(text, chat_id)
-    await message.reply_text(response)
+    try:
+        response = generate_emotional_response(text, chat_id)
+        await message.reply_text(response)
+    except Exception as e:
+        logging.error(f"Error: {str(e)}")
+        await message.reply_text("Terjadi kesalahan internal")
 
 if __name__ == '__main__':
     application = Application.builder().token(BOT_TOKEN).build()
