@@ -1,5 +1,5 @@
 # Bot Telegram By Tarna Wijaya 
-![bot](./img/icon.png)
+[![bot](./img/icon.png)](https://t.me/TarnaWijaya_grup)
 
 # Pertama
 Anda harus membuat botnya di[@BotFather](https://t.me/BotFather)
