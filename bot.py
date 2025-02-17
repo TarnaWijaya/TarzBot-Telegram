@@ -20,7 +20,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = """
-    💫 **Gemini Telegram Bot** 💫
+    💫 **Tarna(BOT) Telegram Bot** 💫
     
     /start - Mulai bot
     /help - Tampilkan pesan bantuan
