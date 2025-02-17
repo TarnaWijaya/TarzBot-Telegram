@@ -21,11 +21,11 @@ logging.basicConfig(
 conversation_history = defaultdict(list)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('Halo! Saya Gemini Assistant. Ketik /help untuk bantuan')
+    await update.message.reply_text('Halo! Saya Tarna(BOT). Ketik /help untuk bantuan')
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = """
-    💫 **Gemini Telegram Bot** 💫
+    💫 **Tarna(BOT) Telegram Bot** 💫
     
     /start - Mulai bot
     /help - Tampilkan pesan bantuan
@@ -36,6 +36,9 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     - Bisa di-reply di grup
     - Memori percakapan terbatas
     - Deteksi bahasa otomatis
+    
+    By @TarnaWijaya
+    Grup @TarnaWijaya_grup
     """
     await update.message.reply_text(help_text, parse_mode='Markdown')
 
