@@ -20,24 +20,27 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = """
-    💫 **Tarna(BOT) Telegram Bot** 💫
-    📱**Developer: @TarnaWijaya**
-    
-    /start - Mulai bot
-    /help - Tampilkan pesan bantuan
-    /ask [pertanyaan] - Ajukan pertanyaan ke AI
-    
-    Fitur:
-    - Diskusi grup dengan command /ask
-    - Pencarian informasi real-time
-    - Kemampuan analisis data
-    - Percakapan kontekstual
-    
-    Organisasi:
-    - Telegram: @TarnaWijaya_grup
-    - WhatsApp: [Papah Jerman 😃](https://chat.whatsapp.com/Gomu4BhzluT3gaXRHmNs4n)
-    """
-    await update.message.reply_text(help_text, parse_mode='Markdown')
+💫 **Tarna(BOT) Telegram Bot** 💫
+📱 **Developer**: [Tarna Wijaya](https://t.me/TarnaWijaya)
+
+✨ **Perintah yang Tersedia**:
+/start - Mulai bot
+/help - Tampilkan pesan bantuan
+/ask [pertanyaan] - Ajukan pertanyaan ke AI
+
+🚀 **Fitur**:
+- Diskusi grup dengan command `/ask`
+- Pencarian informasi real-time
+- Kemampuan analisis data
+- Percakapan kontekstual
+
+🌐 **Organisasi**:
+- Telegram: [Tarna Wijaya Grup](https://t.me/TarnaWijaya_grup)
+- WhatsApp: [Papah Jerman 😃](https://chat.whatsapp.com/Gomu4BhzluT3gaXRHmNs4n)
+"""
+
+    await update.message.reply_text(help_text, parse_mode="Markdown")
+
 
 def generate_content(prompt):
     headers = {'Content-Type': 'application/json'}
