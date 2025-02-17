@@ -16,7 +16,7 @@ logging.basicConfig(
 )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('Halo! Saya Tarna(BOT), asisten kecerdasan buatan yang dibuat oleh @TarnaWijaya. Untuk informasi lengkap tentang model dan produk kami, silakan lihat dokumentasi resmi kami.🙏🗿')
+    await update.message.reply_text('Halo! Saya Tarna(BOT), asisten kecerdasan buatan yang dibuat oleh @TarnaWijaya Layanan API Gemini. Untuk informasi lengkap tentang model dan produk kami, silakan lihat dokumentasi resmi kami.🙏🗿')
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = """
