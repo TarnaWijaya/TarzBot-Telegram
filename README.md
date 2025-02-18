@@ -34,9 +34,9 @@
 
 # PENTING!
 - Pastikan API Key rahasia tidak dibagikan ke siapapun
+- mengunakan fork
 - Bot akan berhenti saat Termux ditutup
 - Untuk 24/7 aktif, gunakan server/VPS
-```
 
 Contoh edit API Key:
 ```python
