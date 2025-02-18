@@ -22,7 +22,7 @@
    ```
 
 4. EDIT BOT
-   - Buka file `bot.py` dengan text editor
+   - Buka file `bot.py` dengan text editor `nano bot.py'
    - Cari bagian API KEY (biasanya tertulis "YOUR_API_KEY")
    - Ganti dengan API Key dari @BotFather
    - Simpan perubahan
